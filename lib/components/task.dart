@@ -7,15 +7,27 @@ class Task extends StatefulWidget {
   final String photo;
   final int difficulty;
 
-  const Task(this.name, this.photo, this.difficulty, {super.key});
+  Task(this.name, this.photo, this.difficulty, {super.key});
+
+  int level = 0;
+  int mastery = 1;
+  int totalLevel = 0;
+
+  double get progressCalculation =>
+      ((level / mastery) / difficulty) / 10;
 
   @override
   State<Task> createState() => _TaskState();
 }
 
 class _TaskState extends State<Task> {
-  int level = 0;
-  int mastery = 1;
+
+  bool assetOrNetwork() {
+    if (widget.photo.contains('http')) {
+      return false;
+    }
+    return true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +37,8 @@ class _TaskState extends State<Task> {
         children: [
           Container(
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4), color: setProgressBarBackgroundColor()),
+                borderRadius: BorderRadius.circular(4),
+                color: setProgressBarBackgroundColor()),
             height: 140,
           ),
           Column(
@@ -48,10 +61,15 @@ class _TaskState extends State<Task> {
                       height: 100,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(4),
-                        child: Image.asset(
-                          widget.photo,
-                          fit: BoxFit.cover,
-                        ),
+                        child: assetOrNetwork()
+                            ? Image.asset(
+                                widget.photo,
+                                fit: BoxFit.cover,
+                              )
+                            : Image.network(
+                                widget.photo,
+                                fit: BoxFit.cover,
+                              ),
                       ),
                     ),
                     Column(
@@ -66,7 +84,9 @@ class _TaskState extends State<Task> {
                                 fontSize: 24, overflow: TextOverflow.ellipsis),
                           ),
                         ),
-                        Difficulty(difficultyLevel: widget.difficulty,)
+                        Difficulty(
+                          difficultyLevel: widget.difficulty,
+                        )
                       ],
                     ),
                     SizedBox(
@@ -75,11 +95,12 @@ class _TaskState extends State<Task> {
                       child: ElevatedButton(
                           onPressed: () {
                             setState(() {
-                              if (progressCalculation != 1) {
-                                level++;
-                              } else if (mastery < 5) {
-                                mastery++;
-                                level = 0;
+                              if (widget.progressCalculation != 1) {
+                                widget.level++;
+                                widget.totalLevel++;
+                              } else if (widget.mastery < 5) {
+                                widget.mastery++;
+                                widget.level = 0;
                               }
                             });
                           },
@@ -107,15 +128,14 @@ class _TaskState extends State<Task> {
                         width: 200,
                         child: LinearProgressIndicator(
                           color: Colors.white,
-                          value: (widget.difficulty > 0)
-                              ? progressCalculation
-                              : 1,
+                          value:
+                              (widget.difficulty > 0) ? widget.progressCalculation : 1,
                         )),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      'Nivel: $level',
+                      'Nivel: ${widget.level}',
                       style: const TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   ),
@@ -128,13 +148,11 @@ class _TaskState extends State<Task> {
     );
   }
 
-  MaterialColor setProgressBarBackgroundColor() => switch(mastery) {
-    1 => Colors.blue,
-    2 => Colors.green,
-    3 => Colors.pink,
-    4 => Colors.purple,
-    _ => Colors.amber
-  };
-
-  double get progressCalculation => ((level/mastery) / widget.difficulty) / 10;
+  MaterialColor setProgressBarBackgroundColor() => switch (widget.mastery) {
+        1 => Colors.blue,
+        2 => Colors.green,
+        3 => Colors.pink,
+        4 => Colors.purple,
+        _ => Colors.amber
+      };
 }
