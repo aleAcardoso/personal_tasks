@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:personal_tasks/data/task_inherited.dart';
 
 class FormScreen extends StatefulWidget {
-  const FormScreen({super.key});
+  const FormScreen(this.taskContext, {super.key});
+
+  final BuildContext taskContext;
 
   @override
   State<FormScreen> createState() => _FormScreenState();
@@ -121,18 +124,18 @@ class _FormScreenState extends State<FormScreen> {
                   ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          print(nameController.text);
-                          print(int.parse(difficultyController.text));
-                          print(nameController.text);
+                          TaskInherited.of(widget.taskContext).newTask(
+                              nameController.text,
+                              imageController.text,
+                              int.parse(difficultyController.text)
+                          );
                           ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                  content: Text('Salvando nova tarefa!')
-                              )
-                          );
+                                  content: Text('Criando uma nova tarefa!')));
                           Navigator.pop(context);
                         }
                       },
-                      child: Text('Adicionar'))
+                      child: const Text('Adicionar'))
                 ],
               ),
             ),
