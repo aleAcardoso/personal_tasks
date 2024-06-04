@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:personal_tasks/components/task_app_bar.dart';
 import 'package:personal_tasks/data/task_inherited.dart';
-import 'package:personal_tasks/screens/form_screen.dart';
+import 'package:personal_tasks/routes/app_routes.dart';
 
 class InitialScreen extends StatefulWidget {
   const InitialScreen({super.key});
@@ -25,10 +25,7 @@ class _InitialScreenState extends State<InitialScreen> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blue,
         onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => FormScreen(context))
-          );
+          Navigator.of(context).pushNamed(AppRoutes.formScreen.route);
         },
         child: const Icon(
           Icons.add,
