@@ -1,27 +1,25 @@
 import 'package:flutter/material.dart';
-
 import 'difficulty.dart';
 
 class Task extends StatefulWidget {
+  final String id;
   final String name;
   final String photo;
   final int difficulty;
 
-  Task(this.name, this.photo, this.difficulty, {super.key});
+  Task(this.id, this.name, this.photo, this.difficulty, {super.key});
 
   int level = 0;
   int mastery = 1;
   int totalLevel = 0;
 
-  double get progressCalculation =>
-      ((level / mastery) / difficulty) / 10;
+  double get progressCalculation => ((level / mastery) / difficulty) / 10;
 
   @override
   State<Task> createState() => _TaskState();
 }
 
 class _TaskState extends State<Task> {
-
   bool assetOrNetwork() {
     if (widget.photo.contains('http')) {
       return false;
@@ -128,8 +126,9 @@ class _TaskState extends State<Task> {
                         width: 200,
                         child: LinearProgressIndicator(
                           color: Colors.white,
-                          value:
-                              (widget.difficulty > 0) ? widget.progressCalculation : 1,
+                          value: (widget.difficulty > 0)
+                              ? widget.progressCalculation
+                              : 1,
                         )),
                   ),
                   Padding(
