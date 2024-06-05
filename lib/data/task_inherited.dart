@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:personal_tasks/components/task.dart';
+import 'package:uuid/uuid.dart';
 
 class TaskInherited extends InheritedWidget {
   TaskInherited({
@@ -8,15 +9,15 @@ class TaskInherited extends InheritedWidget {
   });
 
   final List<Task> taskList = [
-    Task('Aprender Flutter', 'assets/images/dash.png', 3),
-    Task('Andar de Bike', 'assets/images/bike.webp', 2),
-    Task('Meditar', 'assets/images/meditar.jpeg', 5),
-    Task('Ler', 'assets/images/livro.jpg', 4),
-    Task('Jogar', 'assets/images/jogar.jpg', 1),
+    Task(const Uuid().v1(), 'Aprender Flutter', 'assets/images/dash.png', 3),
+    Task(const Uuid().v1(), 'Andar de Bike', 'assets/images/bike.webp', 2),
+    Task(const Uuid().v1(), 'Meditar', 'assets/images/meditar.jpeg', 5),
+    Task(const Uuid().v1(), 'Ler', 'assets/images/livro.jpg', 4),
+    Task(const Uuid().v1(), 'Jogar', 'assets/images/jogar.jpg', 1),
   ];
 
   void newTask(String name, String photo, int difficulty) {
-    taskList.add(Task(name, photo, difficulty));
+    taskList.add(Task(const Uuid().v1(), name, photo, difficulty));
   }
 
   double get levelSum {
