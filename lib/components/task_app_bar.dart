@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:personal_tasks/data/task_inherited.dart';
+import 'package:personal_tasks/data/task_dao.dart';
 
 class TaskAppBar extends StatefulWidget {
-  const TaskAppBar({super.key});
+  const TaskAppBar(this.onRefreshButtonClicked, {super.key});
+
+  final VoidCallback onRefreshButtonClicked;
 
   @override
   State<TaskAppBar> createState() => _TaskAppBarState();
@@ -12,6 +14,12 @@ class _TaskAppBarState extends State<TaskAppBar> {
 
   double globalLevel = 0.0;
   double levelSum = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    calculateProgress();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +39,7 @@ class _TaskAppBarState extends State<TaskAppBar> {
                 Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: SizedBox(
-                    width: 225,
+                    width: 180,
                     child: LinearProgressIndicator(
                       value: globalLevel,
                       color: Colors.white,
@@ -48,10 +56,8 @@ class _TaskAppBarState extends State<TaskAppBar> {
         ),
         IconButton(
           onPressed: (){
-            setState(() {
-              globalLevel = TaskInherited.of(context).globalProgress;
-              levelSum = TaskInherited.of(context).levelSum;
-            });
+            calculateProgress();
+            widget.onRefreshButtonClicked();
           },
           icon: const Icon(
             Icons.refresh,
@@ -60,5 +66,16 @@ class _TaskAppBarState extends State<TaskAppBar> {
         )
       ],
     );
+  }
+
+  void calculateProgress() {
+    setState(() {
+      TaskDao().levelSum.then((level) {
+        TaskDao().globalProgress.then((global) {
+          globalLevel = global;
+          levelSum = level;
+        });
+      });
+    });
   }
 }
