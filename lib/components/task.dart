@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:personal_tasks/components/custom_alert_dialog.dart';
+import 'package:personal_tasks/data/task_dao.dart';
 import 'difficulty.dart';
 
 class Task extends StatefulWidget {
-  final String id;
-  final String name;
-  final String photo;
-  final int difficulty;
+  String id;
+  String name;
+  String photo;
+  int difficulty;
 
-  Task(this.id, this.name, this.photo, this.difficulty, {super.key});
+  Task(this.id, this.name, this.photo, this.difficulty,
+      {this.level = 0, this.mastery = 1, this.totalLevel = 0, super.key});
 
-  int level = 0;
-  int mastery = 1;
-  int totalLevel = 0;
+  int level;
+  int mastery;
+  int totalLevel;
 
   double get progressCalculation => ((level / mastery) / difficulty) / 10;
 
@@ -91,11 +94,31 @@ class _TaskState extends State<Task> {
                       height: 64,
                       width: 64,
                       child: ElevatedButton(
+                          onLongPress: () {
+                            showDialog(
+                                context: context,
+                                builder: (context) => CustomAlertDialog(
+                                    title: 'Deseja deletar esta tarefa?',
+                                    primaryButtonText: 'Sim, deletar',
+                                    secondaryButtonText: 'Não, cancelar',
+                                    onPrimaryButtonClicked: () {
+                                      TaskDao().delete(widget.id);
+                                    }));
+                          },
                           onPressed: () {
                             setState(() {
                               if (widget.progressCalculation != 1) {
                                 widget.level++;
                                 widget.totalLevel++;
+                                TaskDao().save(Task(
+                                  widget.id,
+                                  widget.name,
+                                  widget.photo,
+                                  widget.difficulty,
+                                  level: widget.level,
+                                  mastery: widget.mastery,
+                                  totalLevel: widget.totalLevel
+                                ));
                               } else if (widget.mastery < 5) {
                                 widget.mastery++;
                                 widget.level = 0;
